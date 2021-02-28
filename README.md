@@ -1,70 +1,176 @@
-# Getting Started with Create React App
+# Todo App React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### LIVE SITE: https://todoapp-crud-react.netlify.app
 
-## Available Scripts
+- workspace settings
 
-In the project directory, you can run:
+```json
+{
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true
+  }
+}
+```
 
-### `yarn start`
+Dependency Install
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- `npx create-react-app todoapp`
+- `cd todoapp`
+- `yarn start`
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- `yarn add react-icons`
 
-### `yarn test`
+### yarn start
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```javascript
+//ToDoApp.js
+import React, { useState } from "react";
+import TodoForm from "./components/TodoForm";
+import TodoList from "./components/TodoList";
+import "./style.css";
 
-### `yarn build`
+export default function ToDoApp() {
+  const [todos, setTodos] = useState([]);
+  const addTodo = (todo) => {
+    if (!todo.text || /^\s*$/.test(todo.text)) {
+      return;
+    }
+    const newTodos = [...todos, todo];
+    setTodos(newTodos);
+  };
+  const updateTodo = (todoId, newValue) => {
+    if (!newValue.text || /^\s*$/.test(newValue.text)) {
+      return;
+    }
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    setTodos((prev) =>
+      prev.map((item) => (item.id === todoId ? newValue : item))
+    );
+  };
+  const completeTodo = (id) => {
+    let updatedTodos = todos.map((todo) => {
+      if (id == todo.id) {
+        todo.isComplete = !todo.isComplete;
+      }
+      return todo;
+    });
+    setTodos(updatedTodos);
+  };
+  const removeTodo = (id) => {
+    setTodos(todos.filter((todo) => id != todo.id));
+  };
+  return (
+    <div className="todo-app">
+      <h1>Whats Your Plan Today</h1>
+      <TodoForm onSubmit={addTodo} />
+      <TodoList
+        todos={todos}
+        completeTodo={completeTodo}
+        removeTodo={removeTodo}
+        updateTodo={updateTodo}
+      />
+    </div>
+  );
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+// components/TodoForm.jsx
+import React, { useRef, useEffect, useState } from "react";
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export default function TodoForm(props) {
+  const [input, setinput] = useState(props.edit ? props.edit.value : "");
+  const inputRef = useRef(null);
+  useEffect(() => {
+    inputRef.current.focus();
+  });
+  const handleChange = (e) => setinput(e.target.value);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    props.onSubmit({
+      id: Math.floor(Math.random() * 1000),
+      text: input,
+    });
+    setinput("");
+  };
 
-### `yarn eject`
+  return (
+    <form onSubmit={handleSubmit}>
+      {props.edit ? (
+        <>
+          <input
+            type="text"
+            placeholder="Input Task here..."
+            className="todo-input"
+            ref={inputRef}
+            onChange={handleChange}
+            value={input}
+          />
+          <input type="submit" value="Update Todo" className="todo-button" />
+        </>
+      ) : (
+        <>
+          <input
+            type="text"
+            placeholder="Input Task here..."
+            className="todo-input"
+            ref={inputRef}
+            onChange={handleChange}
+            value={input}
+          />
+          <input type="submit" value="Add Todo" className="todo-button" />
+        </>
+      )}
+    </form>
+  );
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```js
+// components/TodoList.jsx
+import React from "react";
+import { useState } from "react";
+import { RiCloseCircleLine } from "react-icons/ri";
+import { TiEdit } from "react-icons/ti";
+import TodoForm from "./TodoForm";
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default function TodoList({
+  todos,
+  completeTodo,
+  updateTodo,
+  removeTodo,
+}) {
+  const [edit, setEdit] = useState({ id: null, text: "" });
+  const submitUpdate = (value) => {
+    updateTodo(edit.id, value);
+    setEdit({ id: null, value: "" });
+  };
+  if (edit.id) {
+    return <TodoForm edit={edit} onSubmit={submitUpdate} />;
+  }
+  return todos.map((todo, i) => (
+    <div className={todo.isComplete ? "todo-row complete" : "todo-row"} key={i}>
+      <div key={todo.id} onClick={() => completeTodo(todo.id)} className="">
+        {todo.text}
+      </div>
+      <div className="icons">
+        <RiCloseCircleLine
+          className="delete-icon"
+          onClick={() => removeTodo(todo.id)}
+        />
+        <TiEdit
+          className="edit-icon"
+          onClick={() => setEdit({ id: todo.id, value: todo.text })}
+        />
+      </div>
+    </div>
+  ));
+}
+```
