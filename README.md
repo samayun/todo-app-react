@@ -2,6 +2,8 @@
 
 ### LIVE SITE: https://todoapp-crud-react.netlify.app
 
+![Todo app](docs/homepage.png)
+
 - workspace settings
 
 ```json
@@ -174,3 +176,8 @@ export default function TodoList({
   ));
 }
 ```
+
+## Blog
+
+- [Error: ENOSPC: System limit for number of file watchers reached
+  Solution](docs/watcher-reached-prolem-solved.md)
